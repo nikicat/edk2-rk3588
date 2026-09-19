@@ -462,3 +462,16 @@ The license for some of the blobs in the `misc/rkbin/` directory can be found at
 This firmware is based on Rockchip's initial efforts at <https://gitlab.com/rk3588_linux/rk/uefi-monorepo>.
 
 For RK356x, check out the Quartz64-UEFI project at https://github.com/jaredmcneill/quartz64_uefi, from which we also reused some code.
+
+## Using upstream OP-TEE
+
+The FIT carries Rockchip's OP-TEE (`bl32` from rkbin), which is only started
+by Rockchip's BL31. To run an upstream OP-TEE with the open TF-A, build TF-A
+with the OP-TEE dispatcher and put your own image in the FIT:
+
+    ./build.sh -d rock-5b --tfa-flags "SPD=opteed" --bl32 /path/to/tee-raw.bin
+
+The RK3588 SPL passes BL31 no BL32 entry point; the open TF-A needs the
+fallback from `arm-trusted-firmware` branch `rk3588` (PLAT_RK_BL32_BASE) for
+this to work, and OP-TEE should be built with `CFG_RK3588_FIREWALL_BY_BL31=y`.
+

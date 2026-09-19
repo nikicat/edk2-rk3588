@@ -471,7 +471,8 @@ with the OP-TEE dispatcher and put your own image in the FIT:
 
     ./build.sh -d rock-5b --tfa-flags "SPD=opteed" --bl32 /path/to/tee-raw.bin
 
-The RK3588 SPL passes BL31 no BL32 entry point; the open TF-A needs the
-fallback from `arm-trusted-firmware` branch `rk3588` (PLAT_RK_BL32_BASE) for
-this to work, and OP-TEE should be built with `CFG_RK3588_FIREWALL_BY_BL31=y`.
+The RK3588 SPL passes BL31 no BL32 entry point, and OP-TEE's own DDR firewall
+programming hangs under this TF-A; `arm-trusted-firmware-patches/0010` and
+`0011` make BL31 start the FIT's OP-TEE at 0x08400000 and protect its 15 MiB
+with firewall region 1. Build OP-TEE with `CFG_RK3588_FIREWALL_BY_BL31=y`.
 

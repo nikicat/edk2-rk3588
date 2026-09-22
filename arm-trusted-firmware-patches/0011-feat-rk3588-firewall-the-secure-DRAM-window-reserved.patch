@@ -1,4 +1,4 @@
-From 117f9d8ddef0e22108a67ea86154deb7b763b26a Mon Sep 17 00:00:00 2001
+From 8ff0f12c375017ca704d0bdd54ccca9cf872285e Mon Sep 17 00:00:00 2001
 From: Nikolay Bryskin <nikicat@users.noreply.github.com>
 Date: Sat, 19 Sep 2026 22:14:29 +0000
 Subject: [PATCH 11/11] feat(rk3588): firewall the secure DRAM window reserved
@@ -30,8 +30,8 @@ Signed-off-by: Nikolay Bryskin <nikicat@users.noreply.github.com>
 ---
  plat/rockchip/common/bl31_plat_setup.c       | 17 +++++++++++++++++
  plat/rockchip/rk3588/drivers/secure/secure.c | 11 +++++++++++
- plat/rockchip/rk3588/include/platform_def.h  | 12 ++++++++----
- 3 files changed, 36 insertions(+), 4 deletions(-)
+ plat/rockchip/rk3588/include/platform_def.h  | 17 +++++++++++++----
+ 3 files changed, 41 insertions(+), 4 deletions(-)
 
 diff --git a/plat/rockchip/common/bl31_plat_setup.c b/plat/rockchip/common/bl31_plat_setup.c
 index f95553cd3..d11d3693c 100644
@@ -91,10 +91,10 @@ index 843bdd9a9..e53df8742 100644
  	/* Use FIREWALL_SYSMEM_RGN0 to config SRAM_ENTRY code(0~4k of sram) to secure */
  	sram_fw_rgn_config(0, 4, 0);
 diff --git a/plat/rockchip/rk3588/include/platform_def.h b/plat/rockchip/rk3588/include/platform_def.h
-index 4637dbe7e..0d0554583 100644
+index 4637dbe7e..e2512570b 100644
 --- a/plat/rockchip/rk3588/include/platform_def.h
 +++ b/plat/rockchip/rk3588/include/platform_def.h
-@@ -82,12 +82,16 @@
+@@ -82,12 +82,21 @@
  #define BL31_BASE		(TZRAM_BASE + 0x40000)
  
  /*
@@ -110,8 +110,13 @@ index 4637dbe7e..0d0554583 100644
 + * both the firewall region and the entry-point fallback.
   */
  #define PLAT_RK_SEC_DRAM_BASE	0x08400000
-+/* 15 MiB of the 16 MiB reserved window; the last MiB stays non-secure (debug console) */
-+#define PLAT_RK_SEC_DRAM_SIZE	0x00f00000
++/*
++ * The whole 16 MiB reserved window.  A build that puts a normal-world-readable
++ * RAM console inside it, for a board whose debug UART is not reachable, has to
++ * shrink this by the size of that console: leaving the tail non-secure lets the
++ * non-secure world read whatever BL32 logs there, so it is not the default.
++ */
++#define PLAT_RK_SEC_DRAM_SIZE	0x01000000
  #define BL31_LIMIT		(TZRAM_BASE + TZRAM_SIZE)
  
  /*******************************************************************************

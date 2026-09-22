@@ -473,6 +473,7 @@ with the OP-TEE dispatcher and put your own image in the FIT:
 
 The RK3588 SPL passes BL31 no BL32 entry point, and OP-TEE's own DDR firewall
 programming hangs under this TF-A; `arm-trusted-firmware-patches/0010` and
-`0011` make BL31 start the FIT's OP-TEE at 0x08400000 and protect its 15 MiB
-with firewall region 1. Build OP-TEE with `CFG_RK3588_FIREWALL_BY_BL31=y`.
+`0011` make BL31 start the FIT's OP-TEE at 0x08400000 and firewall the whole
+16 MiB window reserved for it with region 1. Build OP-TEE with
+`CFG_RK3588_FIREWALL_BY_BL31=y`.
 
